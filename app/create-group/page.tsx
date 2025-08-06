@@ -36,7 +36,9 @@ export default function CreateGroupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+
     try {
+     
       
       const { data, error } = await supabase
         .from('groups')

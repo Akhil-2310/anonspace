@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { ArrowRight, Shield, Users, Vote, Globe, Lock, Zap } from 'lucide-react'
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export default function HomePage() {
   return (

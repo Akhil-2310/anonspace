@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { Shield, ArrowLeft, Plus, ThumbsUp, ThumbsDown, Send, Users } from 'lucide-react'
-import { createClient } from '@/utils/supabase/client'
 import { supabase } from '@/utils/supabase/client'
 
 interface Group {
@@ -47,7 +46,7 @@ export default function GroupPage() {
   }, [groupId])
 
   const fetchGroupData = async () => {
-   
+    
     
     try {
       // Fetch group details
@@ -83,8 +82,7 @@ export default function GroupPage() {
 
   const handleCreateProposal = async (e: React.FormEvent) => {
     e.preventDefault()
-   
-
+    
     try {
       const { error } = await supabase
         .from('proposals')
@@ -135,7 +133,7 @@ export default function GroupPage() {
     e.preventDefault()
     if (!newPost.trim()) return
 
-    
+   
 
     try {
       const { error } = await supabase
