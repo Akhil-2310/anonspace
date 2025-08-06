@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, Shield, Users, Vote, Globe, Lock, Zap } from 'lucide-react'
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export default function HomePage() {
   return (
@@ -22,6 +23,7 @@ export default function HomePage() {
               <Link href="/create-group" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                 Create Group
               </Link>
+              <appkit-button />
             </div>
           </div>
         </div>
