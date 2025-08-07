@@ -15,7 +15,7 @@ import {
 } from "@selfxyz/qrcode"
 import { v4 as uuidv4 } from 'uuid'
 import { getSemaphoreGroup, getUserSemaphoreIdentity, isUserMember, fixIdentityMismatch, clearCorruptedIdentity, getUserStoredCommitment } from '@/utils/semaphore'
-import { generateProof } from "@semaphore-protocol/proof"
+import { generateProof, verifyProof } from "@semaphore-protocol/proof"
 
 interface GroupData {
   id: string
@@ -368,6 +368,13 @@ export default function GroupPage() {
       const proof = await generateProof(identity, semaphoreGroup, messageHash, scope)
       
       console.log('Vote proof generated successfully:', proof)
+      
+      // Verify the proof before storing it
+      const isValidProof = await verifyProof(proof)
+      if (!isValidProof) {
+        throw new Error('Generated proof is invalid - verification failed')
+      }
+      console.log('Vote proof verified successfully ✅')
 
       // Store the anonymous vote
       const { error: voteError } = await supabase
@@ -477,6 +484,13 @@ export default function GroupPage() {
       const proof = await generateProof(identity, semaphoreGroup, messageHash, scope)
       
       console.log('Post proof generated successfully:', proof)
+      
+      // Verify the proof before storing it
+      const isValidProof = await verifyProof(proof)
+      if (!isValidProof) {
+        throw new Error('Generated proof is invalid - verification failed')
+      }
+      console.log('Post proof verified successfully ✅')
 
       // Store the anonymous post
       const { error } = await supabase
