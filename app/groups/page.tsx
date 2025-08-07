@@ -5,8 +5,10 @@ import Link from 'next/link'
 import { Shield, Users, Globe, Calendar, ArrowRight, Search } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { supabase } from '@/utils/supabase/client'
+import { Group } from "@semaphore-protocol/group"
+import { getSemaphoreGroup } from '@/utils/semaphore'
 
-interface Group {
+interface GroupData {
   id: string
   name: string
   description: string
@@ -24,12 +26,12 @@ const countryNames: { [key: string]: string } = {
 }
 
 export default function GroupsPage() {
-  const [groups, setGroups] = useState<Group[]>([])
-  const [filteredGroups, setFilteredGroups] = useState<Group[]>([])
+  const [groups, setGroups] = useState<GroupData[]>([])
+  const [filteredGroups, setFilteredGroups] = useState<GroupData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState('all')
-
+  const [semaphoreGroups, setSemaphoreGroups] = useState<Record<string, Group>>({})
   useEffect(() => {
     fetchGroups()
   }, [])
@@ -37,6 +39,33 @@ export default function GroupsPage() {
   useEffect(() => {
     filterGroups()
   }, [groups, searchTerm, filterType])
+
+  useEffect(() => {
+    if (groups.length > 0) {
+      loadSemaphoreGroups()
+    }
+  }, [groups])
+
+  const loadSemaphoreGroups = async () => {
+    const loadedGroups: Record<string, Group> = {}
+    
+    for (const group of groups) {
+      try {
+        const semaphoreGroup = await getSemaphoreGroup(group.id)
+        loadedGroups[group.id] = semaphoreGroup || new Group()
+      } catch (error) {
+        console.error(`Error loading Semaphore group ${group.id}:`, error)
+        loadedGroups[group.id] = new Group()
+      }
+    }
+    
+    setSemaphoreGroups(loadedGroups)
+  }
+
+  const getMemberCount = (groupId: string): number => {
+    const semaphoreGroup = semaphoreGroups[groupId]
+    return semaphoreGroup ? semaphoreGroup.members.length : 0
+  }
 
   const fetchGroups = async () => {
     
@@ -77,7 +106,7 @@ export default function GroupsPage() {
     setFilteredGroups(filtered)
   }
 
-  const getRestrictionDisplay = (group: Group) => {
+  const getRestrictionDisplay = (group: GroupData) => {
     if (group.restriction_type === 'nationality') {
       return countryNames[group.restriction_value] || group.restriction_value
     }
@@ -107,6 +136,12 @@ export default function GroupsPage() {
               <span className="text-2xl font-bold text-gray-800">AnonSpace</span>
             </Link>
             <div className="flex items-center space-x-4">
+              <Link 
+                href="/my-groups"
+                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+              >
+                My Groups
+              </Link>
               <Link 
                 href="/create-group"
                 className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1"
@@ -201,14 +236,26 @@ export default function GroupsPage() {
                       {group.description}
                     </p>
 
-                    <div className="flex items-center space-x-2 mb-4">
-                      <RestrictionIcon className="h-5 w-5 text-gray-500" />
-                      <span className="text-sm text-gray-600">
-                        {group.restriction_type === 'nationality' ? 'Country' : 'Age'}: {' '}
-                        <span className="font-semibold text-gray-800">
-                          {getRestrictionDisplay(group)}
+                    <div className="space-y-3 mb-4">
+                      <div className="flex items-center space-x-2">
+                        <RestrictionIcon className="h-5 w-5 text-gray-500" />
+                        <span className="text-sm text-gray-600">
+                          {group.restriction_type === 'nationality' ? 'Country' : 'Age'}: {' '}
+                          <span className="font-semibold text-gray-800">
+                            {getRestrictionDisplay(group)}
+                          </span>
                         </span>
-                      </span>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        <Users className="h-5 w-5 text-gray-500" />
+                        <span className="text-sm text-gray-600">
+                          <span className="font-semibold text-gray-800">
+                            {getMemberCount(group.id)}
+                          </span>
+                          {getMemberCount(group.id) === 1 ? ' member' : ' members'}
+                        </span>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -257,3 +304,4 @@ export default function GroupsPage() {
     </div>
   )
 }
+

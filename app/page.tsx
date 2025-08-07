@@ -13,11 +13,11 @@ export default function HomePage() {
               <span className="text-2xl font-bold text-gray-800">AnonSpace</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="#features" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
-                Features
+              <Link href="/groups" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
+                Browse Groups
               </Link>
-              <Link href="#how-it-works" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
-                How it Works
+              <Link href="/my-groups" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
+                My Groups
               </Link>
               <Link href="/create-group" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                 Create Group
@@ -54,6 +54,12 @@ export default function HomePage() {
                 className="bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 Browse Groups
+              </Link>
+              <Link 
+                href="/my-groups"
+                className="bg-white border-2 border-green-500 text-green-600 hover:bg-green-50 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
+                My Groups
               </Link>
             </div>
           </div>
